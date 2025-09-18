@@ -1,7 +1,7 @@
 ---
 title: "lab_01"
-author: "Derek Willis"
-date: "2025-01-16"
+author: "Andrew Diveley"
+date: "2025-09-17"
 output: html_document
 ---
 
@@ -39,19 +39,29 @@ umd_courses <- read_rds("lab_01.rds")
 
 ## Answer questions
 
-**Q1** Which department has the highest mean (average) number of seats for its classes? You need to show the department with the highest average first. Which one is the most surprising/interesting to you? **A1**
+**Q1** Which department has the highest mean (average) number of seats for its classes? You need to show the department with the highest average first. Which one is the most surprising/interesting to you? **A1** Computer, Math, and Natural Sciences
 
 ```{r}
+umd_courses |>
+  group_by(department) |>
+  summarise(
+    mean_seats = mean(seats)
+  ) |>
+  arrange(desc(mean_seats))
 ```
 
-**Q2** Find out the greatest number of times any individual class has been offered in our dataset. Your code must show the greatest number of classes first.
-**A2**
+**Q2** Find out the greatest number of times any individual class has been offered in our dataset. Your code must show the greatest number of classes first. **A2**
 
 ```{r}
+umd_courses |>
+  group_by(id) |>
+  summarise(
+    total_offered = sum(sections)
+  ) |>
+  arrange(desc(times_offered))
 ```
 
-**Q3** Count the number of courses for each instructor and department. Which instructor has taught the most?
-**A3**
+**Q3** Count the number of courses for each instructor and department. Which instructor has taught the most? **A3**
 
 ```{r}
 ```

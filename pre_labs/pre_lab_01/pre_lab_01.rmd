@@ -147,7 +147,7 @@ Describe what you think each line of this code is doing below, based on the resu
 
 ```{r}
 umd_courses |>
-  group_by(term) |>
+  group_by(id) |>
   summarise(
     count_classes = n()
   ) |>
