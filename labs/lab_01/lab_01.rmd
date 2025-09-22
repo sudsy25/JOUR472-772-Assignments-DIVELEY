@@ -50,7 +50,7 @@ umd_courses |>
   arrange(desc(mean_seats))
 ```
 
-**Q2** Find out the greatest number of times any individual class has been offered in our dataset. Your code must show the greatest number of classes first. **A2**
+**Q2** Find out the greatest number of times any individual class has been offered in our dataset. Your code must show the greatest number of classes first. **A2 COMM107**
 
 ```{r}
 umd_courses |>
@@ -58,10 +58,10 @@ umd_courses |>
   summarise(
     total_offered = sum(sections)
   ) |>
-  arrange(desc(times_offered))
+  arrange(desc(total_offered))
 ```
 
-**Q3** Count the number of courses for each instructor and department. Which instructor has taught the most? **A3**
+**Q3** Count the number of courses for each instructor and department. Which instructor has taught the most? **A3** Jason Kuo
 
 ```{r}
 umd_courses |>
