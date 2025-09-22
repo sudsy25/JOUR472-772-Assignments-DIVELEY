@@ -64,11 +64,23 @@ umd_courses |>
 **Q3** Count the number of courses for each instructor and department. Which instructor has taught the most? **A3**
 
 ```{r}
+umd_courses |>
+  group_by(instructors) |>
+  summarise(
+    num_courses = n()
+  ) |>
+  arrange(desc(num_courses))
 ```
 
-**Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know *how* to accomplish this; I want you to describe in words what would make the answer easier to see. How confident are you that the answer you got is the right one, and why? **A4**
+**Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know *how* to accomplish this; I want you to describe in words what would make the answer easier to see. How confident are you that the answer you got is the right one, and why? **A4 I think the question was worded weird, as when i grouped by both department and instructor, I didn't get the same results as just seeing the instructor with the most courses. Also, I believe that I can't account for when some classes are listed with multiple instructors, as I don't think I can pull out individual names in columns.**
 
-**Q5** Take one of the questions you listed in the final question of the pre_lab and try to answer it here in code. If you don't know how to fully answer it, write what code you can and describe in words what else you would need to do. If you got an answer, is it interesting? **A5**
+**Q5** Take one of the questions you listed in the final question of the pre_lab and try to answer it here in code. If you don't know how to fully answer it, write what code you can and describe in words what else you would need to do. If you got an answer, is it interesting? **A5 I answered my question 2, asking which term has the most classes (sections), as it seemed like the easiest one to do. My only worry is that if a class has 0 sections listed, does that mean it isn't open, or it's not a section based class or something? I believe I just grouped by term and sorted by highest total sections offered.**
 
 ```{r}
+umd_courses |>
+  group_by(term) |>
+  summarise(
+    total_sections = sum(sections)
+    ) |>
+  arrange(desc(total_sections))
 ```
