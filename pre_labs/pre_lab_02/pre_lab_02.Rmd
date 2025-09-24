@@ -355,8 +355,8 @@ Now that you have seen how to use mutate, filtering and dates, give me three que
 
 **Answer**
 
-1.  
+1.  Which payee received the most spending, and in what month was the payee's peak?
 
-2.  
+2.  What department offered the most sections ins 2025? How does it compare to 2024?
 
-3.  
+3.  What percentage of classes were in-person vs online?
