@@ -38,7 +38,7 @@ maryland_expenses <- read_csv("data/maryland_expenses.csv")
 
 **Q1.** How many departments have offered the courses with "Climate" in
 the title and at least one seat? Which department has offered the most?
-**A1. Atmospheric**
+**A1. 32 have at least one seat, Atmospheric has the most with 93 seats**
 
 ```{r}
 climate_dept <- umd_courses |>
@@ -50,9 +50,11 @@ climate_dept <- umd_courses |>
 ```
 
 **Q2.** Of the departments listed in A1, which one is the most
-interesting to you, and why? **A2. I was surprised that there were only
+interesting to you, and why? 
+
+**A2.** I was surprised that there were only
 4 climate courses in the geology department, but triple that in
-chemistry. I always thought geology and climate worked hand in hand.**
+chemistry. I always thought geology and climate worked hand in hand.
 
 **Q3** Which departments offered the most courses in the Fall 2024 term?
 And which departments in that term have at least one syllabus posted?
