@@ -38,7 +38,8 @@ maryland_expenses <- read_csv("data/maryland_expenses.csv")
 
 **Q1.** How many departments have offered the courses with "Climate" in
 the title and at least one seat? Which department has offered the most?
-**A1. 32 have at least one seat, Atmospheric has the most with 93 seats**
+**A1. 32 have at least one seat, Atmospheric has the most with 93
+seats**
 
 ```{r}
 climate_dept <- umd_courses |>
@@ -50,11 +51,11 @@ climate_dept <- umd_courses |>
 ```
 
 **Q2.** Of the departments listed in A1, which one is the most
-interesting to you, and why? 
+interesting to you, and why?
 
-**A2.** I was surprised that there were only
-4 climate courses in the geology department, but triple that in
-chemistry. I always thought geology and climate worked hand in hand.
+**A2.** I was surprised that there were only 4 climate courses in the
+geology department, but triple that in chemistry. I always thought
+geology and climate worked hand in hand.
 
 **Q3** Which departments offered the most courses in the Fall 2024 term?
 And which departments in that term have at least one syllabus posted?
@@ -90,7 +91,8 @@ spent each month by Wes Moore's committee (you'll need to search the
 data to find the exact name, and we're not looking in payee_name). Write
 a sentence describing the pattern of spending over time.
 
-**A4. Spending increased overtime, starting with 6000, ending up with 735000.**
+**A4. Spending increased overtime, starting with 6000, ending up with
+735000.**
 
 ```{r}
 maryland_expenses <- maryland_expenses |> mutate(expenditure_date=mdy(expenditure_date))
@@ -110,15 +112,43 @@ new column's value "In-state" and for all others, make it "Out of
 state". Then write code that shows the total amount of money spent in
 each category and describe the results. You can do this in one statement
 or break it up into two statements (saving the new column to your
-dataframe). **A5**
+dataframe). **A5 I broke it into 2 parts, so I added the in the new
+column and made the .default Out of state. That's the only possible
+limitation of my data, is if in had an "NA" in the address value, it may
+still have been in state, but it's difficult to sort out that data
+(there may be an easy way but I am unsure how). The following step took
+that column and grouped it by instate or out of state, summarizing the
+numbers.**
 
 ```{r}
+instate_expenses <- maryland_expenses |>
+  mutate(
+    spending_location = case_when(
+      str_detect(address, " Maryland ") ~ "In-state",
+      .default = "Out of state"
+    )
+  )
+
+instate_expenses <- instate_expenses |>
+  mutate(
+    amount = replace_na(amount, 0)) |>
+  group_by(spending_location) |>
+  summarise(total_spent = sum(amount)) |>
+  arrange(desc(total_spent))
 ```
 
 **Q6.** Choose your own adventure: using either the UMD courses or
 campaign expenses data, ask and answer a question that is different than
 the previous ones. You can use one of the ones you provided in the
-pre_lab. **A6.**
+pre_lab. **A6. I wanted to explore which month had the most amount of
+money spent. It shows June of 2022 with \$23,102,549.08**
 
 ```{r}
+monthmax <- maryland_expenses |>
+  mutate(
+    month = floor_date(expenditure_date, "month"),
+    amount = replace_na(amount, 0)) |>
+  group_by(month) |>
+  summarise(total_spent = sum(amount)) |>
+  arrange(desc(total_spent))
 ```
