@@ -72,7 +72,7 @@ pg_schools <- cleaned_payments |>
 
 Q2: Using that `pg_schools` dataframe, write code to calculate the total amount of payments to the Prince George's County School system for each fiscal year. Which fiscal year had the largest total amount? Are there any aspects of the results that stand out to you?
 
-A2: 2020. there is a couple years 
+A2: 2020. there is a couple years
 
 ```{r}
 pg_schools_fiscal <- pg_schools |>
