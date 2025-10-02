@@ -138,7 +138,7 @@ Let's get cleaning. Our goal will be to build up one block of code that does all
 
 ### Task 3: Use clean_names()
 
-**Task** Run the following codeblock to use the `clean_names()` function from janitor to standardize column names. How does it change the headers? Answer below. **it makes them usable in code, making them lowercase and taking out spaces for "_"**
+**Task** Run the following codeblock to use the `clean_names()` function from janitor to standardize column names. How does it change the headers? Answer below. \*\*it makes them usable in code, making them lowercase and taking out spaces for "\_"\*\*
 
 ```{r}
 # cleaning function
@@ -263,4 +263,3 @@ cleaned_md_grants_loans |>
   summarise(total_amount = sum(amount)) |>
   arrange(desc(total_amount))
 ```
-
