@@ -57,22 +57,21 @@ HINT: you should use filter() just once, and inside your filter you want to look
 
 When you have found as many as possible, save the result to a new dataframe called `pg_schools`. How many records did you find?
 
-A1: 51
+A1: 70
 
 ```{r}
 pg_schools <- cleaned_payments |>
   filter(
-    vendor_name == "PRINCE GEORGES PUBLIC SCHOOLS" |
-    vendor_name == "PG COUNTY PUBLIC SCHOOL" |
-    vendor_name == "PRINCE GEORGE'S COUNTY PUBLIC SCHOOLS" |
-    vendor_name == "PRINCE GEORGES COUNTY PUBLIC SCHOOLS" |
-    
+    str_detect(vendor_name, "PRINCE") &
+    str_detect(vendor_name, "SCHOOL") |
+    str_detect(vendor_name, "PG") &
+    str_detect(vendor_name, "SCHOOL")
   )
 ```
 
 Q2: Using that `pg_schools` dataframe, write code to calculate the total amount of payments to the Prince George's County School system for each fiscal year. Which fiscal year had the largest total amount? Are there any aspects of the results that stand out to you?
 
-A2: 2020. there is a couple years
+A2: 2021. Not sure if it's just me, but i had no idea they spent $1 billion every year. Also, I was surprised that the COVID years were the highest. Maybe because of Chromebooks?
 
 ```{r}
 pg_schools_fiscal <- pg_schools |>
@@ -85,37 +84,47 @@ Q3. You're interested in examining the vendors paid for capital projects at the 
 
 Look carefully at that list - what cleaning will it require to ensure that you have only one row per vendor and zip code? Provide at least three examples of vendor names that are similar and should be combined into one. Describe in words how you might clean that data so that any nearly identical vendors would look identical - what would you change and how?
 
-A3.
+A3. The zip codes sometimes dont match up, like AGILENT TECHNOLOGIES INC. We could combine exact names somehow. Next, sometimes "company" is listed as "co", so I would mutate and casewhen "company" permanently to "co". That happens with GLOBAL EQUIPMENT COMPANY. A similar thing happens with AYERS SAINT GROSS INC and AYERS SAINT GROSS INCORPORATED, where I would change it to "inc". It's also possible to just straight up remove all of the INC, CO, LLC, etc, as there's many mistakes.
 
 ```{r}
 umd_capital <- cleaned_payments |>
-  mutate(
-    agency_name = str_to_upper(agency_name),
-    category = str_to_upper(category)) |>
-  filter(category == "CAPITAL") |>
+  mutate(agency_name = str_to_upper(agency_name)) |>
   filter(
-    agency == "UNIVERSITY OF MARYLAND, COLLEGE PARK" |
-    agency == "UNIVERSITY OF MARYLAND COLLEGE PARK" |
-    agency == "UNIVERSITY OF MARYLAND AT COLLEGE PARK"
-    agency == "UNIV OF MD"
+    str_detect(agency_name, "UNIVERSITY OF MARYLAND") &
+    str_detect(agency_name, "CAPITAL")
   )
 
 umd_vendor_totals <- umd_capital |>
   group_by(vendor_name, vendor_zip) |>
-  summarise(total_amount = sum(amount)) |>
-  arrange(desc(total_amount))
+  summarise(total_amount = sum(amount))
 ```
 
 Q4: You want to understand how much state grant money went to stem cell research projects each fiscal year. Search the data to find grants that fit that description. Once you find which column(s) contain the information you want, your code should find just the grants for stem cell research in a single filter. Then calculate the total amount of money for each fiscal year. Write a sentence summarizing how stem cell research funding has changed over time.
 
-A4:
+A4: 2009-2013 takes up 5/6 top spots (aside from 2023), so overall the funding has decreased.
 
 ```{r}
+stem_grants <- cleaned_md_grants_loans |>
+  filter(
+    str_detect(description, "STEM CELL") &
+    str_detect(description, "GRANT")
+  )
+
+stem_grant_fiscal <- stem_grants |>
+  group_by(fiscal_year) |>
+  summarise(total_spent = sum(amount)) |>
+  arrange(desc(total_spent))
 ```
 
 Q5: Using the Maryland grants and loan data, find records where the zip code is the one where the University of Maryland-College Park is located in and produce a list of grantees from that zip code, along with the total amount they received. Write a paragraph explaining how many grantees are there, what you would need to do to clean the results so that you had one record per grantee and which grantees are most interesting to you?
 
-A5:
+A5: I had 18, but there are certain parts of UMD in te zip code of 20740 that may be separate. In order to further clean the data, I would remove punctuation and abbreviate certain things to combine all of the UMD grantees. Many of those small companies that appeared interested me, as I didn't know what any of them were.
 
 ```{r}
+zip_totals_md <- cleaned_md_grants_loans |>
+  filter(
+    str_detect(zip5, "20742")) |>
+  group_by(grantee) |>
+  summarise(total_amount = sum(amount)) |>
+  arrange(desc(total_amount))
 ```
