@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_4_ai.Rmd"
-author: "Derek Willis"
-date: "2024-09-26"
+author: "Andrew Diveley"
+date: "2025-10-08"
 output: html_document
 ---
 
@@ -14,7 +14,10 @@ The first thing to know about the large language models that have attracted so m
 We'll be using a service called Groq for the examples here. You should [sign up for a free account](https://www.groq.com) and [create an API key](https://console.groq.com/docs/quickstart). Make sure you copy that key. We'll also need to install an R package to handle the responses:
 
 ```{r}
-#install.packages("devtools")
+install.packages("cli")
+packageVersion("cli")
+
+install.packages("devtools")
 devtools::install_github("heurekalabsco/axolotr")
 ```
 
@@ -22,7 +25,7 @@ Then we can load that library and, using your API key, setup your credentials:
 
 ```{r}
 library(axolotr)
-create_credentials(GROQ_API_KEY = "YOUR API KEY HERE")
+create_credentials(GROQ_API_KEY = "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")
 ```
 
 See that "Please restart your R session for changes to take effect."? Go ahead and do that; you'll need to rerun the `library()` function for axolotr, and let's load tidyverse while we're at it.
