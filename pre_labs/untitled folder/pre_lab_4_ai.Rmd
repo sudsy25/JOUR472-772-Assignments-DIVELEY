@@ -132,7 +132,12 @@ Well, you can try, but I'm not confident you'll like the results. As [this story
 ## TO DO: Create code to ask Groq anything related to this class. Look at its response and comment on whether it is appropriate and correct, and your thoughts about it.
 
 ```{r}
+class_response <- axolotr::ask(
+  prompt = "Is a class structured with short pre-labs we learn as a class and longer labs to work on solo/in small groups together an effective way to learn data journalism? Answer in 4 sentences, plain language.",
+  model = "llama-3.1-8b-instant"
+)
 
+print(class_response)
 ```
 
-**Your comment:**
+**Your comment: I believe the comment was pretty good, as it explained the benefits of the structure of the class.**
