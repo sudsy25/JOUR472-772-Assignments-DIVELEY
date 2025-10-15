@@ -43,7 +43,7 @@ You'll need to load one data set, a CSV file of Maryland campaign expenditures l
 
 ```{r}
 # Load the Maryland expenditures data table
-
+maryland_data <- read_csv("")
 ```
 
 ## Answer questions
