@@ -140,7 +140,7 @@ future_quakes <- earthquakes |>
   mutate(hour = hour(time))
 ```
 
-**A10: I created a new row, just taking the hour part of the **
+**A10: I created a new row, just taking the hour part of the time section**
 
 ------------------------------------------------------------------------
 
