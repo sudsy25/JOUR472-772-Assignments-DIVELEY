@@ -1,7 +1,7 @@
 ---
 title: "Reverse Engineering Project"
-author: "Student names here"
-date: "Date here"
+author: "Andrew, Brian, Sammy, Mehedi"
+date: "10-22-2025"
 output:
   html_document:
     theme: cerulean
@@ -25,7 +25,9 @@ In this notebook, we are reverse engineering the story, [STORY NAME](STORY URL)
 Loading required libraries for this analysis.
 
 ```{r echo=FALSE, message=FALSE}
-
+library(tidyverse)
+library(lubridate)
+library(janitor)
 ```
 
 ## Load and Cleaning Data
@@ -34,6 +36,9 @@ In this section, describe the source of the data, write a basic data dictionary 
 
 ```{r}
 # Load required data
+pop_by_age <- read_csv("data/population-by-age.csv") |> clean_names()
+priv_enroll_by_grade <- read_csv("data/private-enrollment-by-grade.csv") |> clean_names()
+public_enroll_by_grade <- read_csv("data/public-enrollment-by-grade.csv") |> clean_names()
 
 # Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
 
@@ -47,7 +52,8 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: "In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years.”
+
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
