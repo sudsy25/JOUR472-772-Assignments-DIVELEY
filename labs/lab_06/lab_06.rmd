@@ -90,7 +90,7 @@ Add a column to your code that calculates the number of calls per 1,000 people f
 
 Which zip code has the highest rate of calls per 1,000 people? Find the neighborhoods in that zip code that are listed in the data - you can use group_by or distinct to do this. What are some of those neighborhoods, and what else can you tell me about the population there?
 
-A3. the zip codes are inner/west of Baltimore City.
+A3. The zip codes are inner/west of Baltimore City.
 
 ```{r}
 baltimore_under18 <- baltimore_911_joined |>
