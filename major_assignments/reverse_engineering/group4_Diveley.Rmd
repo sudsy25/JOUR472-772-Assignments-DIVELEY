@@ -52,14 +52,26 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-* **Sentence text**: "In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years.”
+* **Sentence text**: "Public school enrollment plunged during the pandemic. Our analysis shows where the students went. In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years.”
 
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
 # Put code to reverse engineer sentence here
+state_enrollment <- public_enroll_by_grade |>
+  filter(sch_year == "2019-2020" | sch_year == "2021-2022") |>
+  group_by(state, sch_year) |>
+  summarise(total_enrollment = sum(enrollment, na.rm = TRUE))
+
+year_enrollment <- state_enrollment |>
+  group_by(sch_year) |>
+  summarise(total_students = sum(total_enrollment))
+
 
 # Display results of code below this codeblock
+enrollment_change <- state_enrollment |>
+  summarise()
+
 
 ```
 
