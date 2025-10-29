@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_07.Rmd"
-author: "derek willis"
-date: "2025-01-15"
+author: "andrew diveley"
+date: "2025-08-27"
 output: html_document
 ---
 
