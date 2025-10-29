@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 options(scipen=999)
 library(tidyverse)
 # if needed, install tidycensus, then load it.
-# install.packages("tidycensus")
+install.packages("tidycensus")
 library(tidycensus)
 ```
 
@@ -33,7 +33,7 @@ To use the API, you need to [an API key from the Census Bureau](https://api.cens
 **Task** Replace YOUR KEY HERE in the codeblock below with your Census API Key (leave the quotemarks).
 
 ```{r echo=FALSE}
-#census_api_key("YOUR KEY HERE", install=TRUE)
+census_api_key("d0a01aa95b716c0ca59676a8ae1c9276359a7104", install=TRUE)
 ```
 
 The `install=TRUE` part saves your key for future use.
@@ -101,7 +101,7 @@ alldata <- p00 |> inner_join(p10)
 
 And now we calculate the percent change.
 
-**Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below. **Answer**
+**Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below. **Answer: Nevada, 35%**
 
 ```{r}
 alldata |> mutate(change = ((Population2010-Population2000)/Population2000)*100) |> arrange(desc(change))
@@ -124,7 +124,7 @@ We can measure this by median household income. That variable is `B19013_001`, s
 
 ### Task 5: Answer Questions with ACS Data
 
-**Task** Run the following codeblock to find the Maryland county with the highest median household income and put the answer below. **Answer**
+**Task** Run the following codeblock to find the Maryland county with the highest median household income and put the answer below. **Answer: Howard county, 130000**
 
 ```{r}
 md <- get_acs(geography = "county",
@@ -141,7 +141,7 @@ What do the top counties all have in common? Lots of suburban flight from D.C an
 
 ### Task 6: Margins of Error
 
-**Task** Run the following codeblock to create a chart showing the margin of error for each county. The current headline isn't very descriptive of the data. What should it be? **Answer**
+**Task** Run the following codeblock to create a chart showing the margin of error for each county. The current headline isn't very descriptive of the data. What should it be? **Answer: Household income by county in Maryland, with margin of error**
 
 ```{r}
 md |>
@@ -157,9 +157,9 @@ md |>
 
 As you can see, some of the error bars are quite wide. Some are narrow. But if the bars overlap, it means the difference between the two counties is within the margin of error, and the differences aren't statistically significant.
 
-Is the difference between Calvert and Montgomery significant? **Answer**
+Is the difference between Calvert and Montgomery significant? **Answer: no**
 
-Is the difference between Howard and everyone else significant? **Answer**
+Is the difference between Howard and everyone else significant? **Answer: yes**
 
 ### Task 7: Joining Multiple Years Together
 
