@@ -47,25 +47,27 @@ You'll also need to load the list of American Community Survey variables from th
 **Task** load the variables from the 2023 5-year ACS (which is called "acs5") and save them to a dataframe
 
 ```{r}
-acs5 <- load_variables(2023, "acs5", cache = TRUE)
+variables <- load_variables(2023, "acs5", cache = TRUE)
+variables2019 <- load_variables(2019, "acs5", cache = TRUE)
 ```
 
 ## Answer questions
 
-**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2023 5-year estimates? You will need to find the variable for median age first. **A1**
+**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2023 5-year estimates? You will need to find the variable for median age first. **A1: Baltimore City, 36.1**
 
 ```{r}
 mdn_age <- get_acs(geography = "county",
               variables = c(medianage = "B01002_001"),
               state = "MD",
               year = 2023)
-
-mdn_age <- filter(estimate <= 50) |> arrange(estimate)
 ```
 
-**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50. **A2**
+**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50. **A2: Talbot County and Worcester County**
 
 ```{r}
+mdn_age_50 <- mdn_age |> 
+  filter(estimate >= 50) |> 
+  arrange(desc(estimate))
 ```
 
 **Q3** We're interested in knowing more about Montgomery County zip codes where overdose calls are coming from and the demographic characteristics they possess. In particular, we want to calculate a rate of calls per 1,000 population. To do this, you'll need to:
@@ -82,6 +84,36 @@ Which zip code has the highest rate of calls? Which has the lowest?
 **A3**
 
 ```{r}
+# pt 1
+mtg_overdoses <- read_csv("data/montgomery_2022_overdoses.csv") |> clean_names() |> mutate(zip = as.character(zip))
+
+# pt 2
+moco_totals <- mtg_overdoses |>
+  group_by(zip) |>
+  summarise(total_calls = n())
+
+# pt 3
+md_18_up <- get_acs(geography = "zcta",
+              variables = c(md_18_up = "B16003_008"),
+              state = "MD",
+              year = 2019)
+
+# pt 4
+acs_zip <- get_acs(
+  geography = "zcta",
+  variables = c(total_pop = "B01003_001"),
+  state = "MD",
+  year = 2019
+)
+
+# pt 5
+joined_data <- moco_totals |>
+  left_join(acs_zip, by = c("zip" = "GEOID")) |>
+  rename(population = estimate)
+
+# pt 6
+joined <- joined |>
+  mutate(rate_per_1000 = (total_calls / population) * 1000)
 ```
 
 **Q4** Using [CensusReporter.org](https://censusreporter.org/), examine the zip codes with the highest and lowest rates and compare and contrast their demographic profiles. Is there a story here?
