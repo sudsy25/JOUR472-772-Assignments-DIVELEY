@@ -183,7 +183,7 @@ md10 <- get_acs(geography = "county",
 
 What we're going to do next is a lot, but each step is simple. We're going to join the data together, so each county has one line of data. Then we're going to rename some fields that repeat. Then we're going to calculate the minimum and maximum value of the estimate using the margin of error. That'll help us later. After that, we're going to calculate a percent change and sort it by that change.
 
-**Task** Run the following codeblock to join the data, rename the population estimates and then calculate the values we need. Notice how we select *after* we do the initial calculations so we only see the columns we're interested in (and drop the ones we don't want to see). Also note how the select function has the minus sign (-) in front of some columns? That means we don't want to see them in our result. Which jurisdictions saw the largest increases in median income? Did any counties see their median incomes fall from 2010-2021? **Answer**
+**Task** Run the following codeblock to join the data, rename the population estimates and then calculate the values we need. Notice how we select *after* we do the initial calculations so we only see the columns we're interested in (and drop the ones we don't want to see). Also note how the select function has the minus sign (-) in front of some columns? That means we don't want to see them in our result. Which jurisdictions saw the largest increases in median income? Did any counties see their median incomes fall from 2010-2021? **Answer: Baltimore City and Allegany County.**
 
 ```{r}
 md10 |>
