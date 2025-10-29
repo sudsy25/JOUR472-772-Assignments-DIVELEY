@@ -55,10 +55,12 @@ acs5 <- load_variables(2023, "acs5", cache = TRUE)
 **Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2023 5-year estimates? You will need to find the variable for median age first. **A1**
 
 ```{r}
-md <- get_acs(geography = "county",
-              variables = c(medianage = "xxxxxxx"),
+mdn_age <- get_acs(geography = "county",
+              variables = c(medianage = "B01002_001"),
               state = "MD",
               year = 2023)
+
+mdn_age <- filter(estimate <= 50) |> arrange(estimate)
 ```
 
 **Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50. **A2**
