@@ -94,7 +94,7 @@ moco_totals <- mtg_overdoses |>
 
 # pt 3
 md_18_up <- get_acs(geography = "zcta",
-              variables = c(md_18_up = "B16003_008"),
+              variables = c(md_18_up = "B01002_001"),
               state = "MD",
               year = 2019)
 
@@ -112,7 +112,7 @@ joined_data <- moco_totals |>
   rename(population = estimate)
 
 # pt 6
-joined <- joined |>
+joined_data <- joined_data |>
   mutate(rate_per_1000 = (total_calls / population) * 1000)
 ```
 

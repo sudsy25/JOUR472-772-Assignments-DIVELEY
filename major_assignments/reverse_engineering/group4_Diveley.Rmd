@@ -1,7 +1,7 @@
 ---
 title: "Reverse Engineering Project"
-author: "Andrew, Brian, Sammy, Mehedi"
-date: "10-22-2025"
+author: "Sammy, Brian, Andrew, Mehedi"
+date: "Oct 22, 2025"
 output:
   html_document:
     theme: cerulean
@@ -16,9 +16,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Introduction 
+## Introduction
 
-In this notebook, we are reverse engineering the story, [STORY NAME](STORY URL)
+In this notebook, we are reverse engineering the story, [**Thousands of kids are missing from school. Where did they go?**](https://projects.apnews.com/features/2023/missing-children/index.html)
 
 ## Load libraries
 
@@ -32,77 +32,79 @@ library(janitor)
 
 ## Load and Cleaning Data
 
-In this section, describe the source of the data, write a basic data dictionary for data you are working with, and discuss any caveats or issues you discovered working with this data. 
+In this section, describe the source of the data, write a basic data dictionary for data you are working with, and discuss any caveats or issues you discovered working with this data.
 
 ```{r}
 # Load required data
-pop_by_age <- read_csv("data/population-by-age.csv") |> clean_names()
-priv_enroll_by_grade <- read_csv("data/private-enrollment-by-grade.csv") |> clean_names()
-public_enroll_by_grade <- read_csv("data/public-enrollment-by-grade.csv") |> clean_names()
 
 # Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
 
 # Clean required data and prepare for analysis if needed. 
-
+public_enrollment <- read_csv("data/public-enrollment-by-grade.csv") |> clean_names()
+private_enrollment <- read_csv("data/private-enrollment-by-grade.csv") |> clean_names()
+population_by_age <- read_csv("data/population-by-age.csv") |> clean_names()
 
 ```
 
 ## Sentences to Engineer
+
 In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-* **Sentence text**: "Public school enrollment plunged during the pandemic. Our analysis shows where the students went. In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years.”
-
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years.
+-   **Analysis summary**: Kind of yes. The summary excel file indicates that the reporter filtered out 22 states which they can also get both private school enrollment and homeschool enrollment data, and write down which those states are. I have no idea why the report here said it's 21 states.
 
 ```{r}
 # Put code to reverse engineer sentence here
-state_enrollment <- public_enroll_by_grade |>
-  filter(sch_year == "2019-2020" | sch_year == "2021-2022") |>
-  group_by(state, sch_year) |>
-  summarise(total_enrollment = sum(enrollment, na.rm = TRUE))
-
-year_enrollment <- state_enrollment |>
-  group_by(sch_year) |>
-  summarise(total_students = sum(total_enrollment))
-
-
 # Display results of code below this codeblock
-enrollment_change <- state_enrollment |>
-  summarise()
+public_enrollment |>
+  filter(grade == "k_12_total") |>
+  filter(state=="CALIFORNIA"|state=="NEW YORK"|state=="LOUISIANA"|state=="NORTH CAROLINA"|state=="WASHINGTON"|state=="COLORADO"|state=="GEORGIA"|state=="MINNESOTA"|state=="WISCONSIN"|state=="NEW HAMPSHIRE"|state=="MASSACHUSETTS"|state=="MONTANA"|state=="DELAWARE"|state=="NORTH DAKOTA"|state=="DISTRICT OF COLUMBIA"|state=="SOUTH DAKOTA"|state=="SOUTH CAROLINA"|state=="NEBRASKA"|state=="RHODE ISLAND"|state=="TENNESSEE"|state=="PENNSYLVANIA"|state=="FLORIDA")|>
+  group_by(sch_year)|>
+  summarise(enrollment_student = sum(enrollment), state_count = n())
+```
 
-
+```{r}
+24786224 - 24081631
 ```
 
 ### Sentence 2
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: Across the states in the analysis, private-school enrollment grew by about 103,000 students.
+-   **Analysis summary**:  Kind of yes. The summary excel file indicates that the reporter filtered out 22 states which they can also get both private school enrollment and homeschool enrollment data, and write down which those states are.
 
 ```{r}
 # Put code to reverse engineer sentence here
+private_enrollment |>
+  filter(grade == "k_12_total") |>
+  filter(state=="CA"|state=="NY"|state=="LA"|state=="NC"|state=="WA"|state=="CO"|state=="GA"|state=="MN"|state=="WI"|state=="NH"|state=="MA"|state=="MT"|state=="DE"|state=="ND"|state=="DC"|state=="SD"|state=="SC"|state=="NE"|state=="RI"|state=="TN"|state=="PA"|state=="FL")|>
+  group_by(sch_year)|>
+  summarise(enrollment_student = sum(enrollment), state_count = n())
 
 # Display results of code below this codeblock
-
+2435491	- 2332644
 ```
 
 ### Sentence 3
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: Some families also moved out of state, accounting for some enrollment decline. And birth rates in some states are falling. The population of school-age kids in the states we studied fell by about 183,000, according to census estimates.
+-   **Analysis summary**: 
 
 ```{r}
 # Put code to reverse engineer sentence here
-
+population_by_age |>
+  filter(state=="CALIFORNIA"|state=="NEW YORK"|state=="LOUISIANA"|state=="NORTH CAROLINA"|state=="WASHINGTON"|state=="COLORADO"|state=="GEORGIA"|state=="MINNESOTA"|state=="WISCONSIN"|state=="NEW HAMPSHIRE"|state=="MASSACHUSETTS"|state=="MONTANA"|state=="DELAWARE"|state=="NORTH DAKOTA"|state=="DISTRICT OF COLUMBIA"|state=="SOUTH DAKOTA"|state=="SOUTH CAROLINA"|state=="NEBRASKA"|state=="RHODE ISLAND"|state=="TENNESSEE"|state=="PENNSYLVANIA"|state=="FLORIDA")|>
+  group_by(est_date) |>
+  summarise(population = sum(population))
 # Display results of code below this codeblock
-
+27846048	- 27662562
 ```
 
 ### Sentence 4
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: [Paste in sentence to engineer here]
+-   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
 # Put code to reverse engineer sentence here
@@ -113,8 +115,8 @@ enrollment_change <- state_enrollment |>
 
 ### Sentence 5
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: [Paste in sentence to engineer here]
+-   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
 # Put code to reverse engineer sentence here
