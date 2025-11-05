@@ -13,6 +13,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **Task** Create a codeblock and load appropriate packages and settings for this lab. We'll be making some charts, working with dates and retrieving Census data.
 
+```{r}
+library(tidyverse)
+library(tidycensus)
+library(lubridate)
+library(janitor)
+```
+
+
 ## Load and modify data
 
 **Task** Create a codeblock and load the following data from the data folder:
@@ -20,6 +28,11 @@ knitr::opts_chunk$set(echo = TRUE)
 -   Prince George's County 911 Overdose Calls
 
 You will need to create columns for the date, week and month based on the existing `datetime` column.
+
+```{r}
+
+```
+
 
 ## Questions
 
