@@ -92,23 +92,17 @@ moco_totals <- mtg_overdoses |>
   group_by(zip) |>
   summarise(total_calls = n())
 
-# pt 3
+# pt 3 and 4
 md_18_up <- get_acs(geography = "zcta",
-              variables = c(md_18_up = "B01002_001"),
+              variables = c(md_18_up = "B16003_008"),
               state = "MD",
               year = 2019)
 
-# pt 4
-acs_zip <- get_acs(
-  geography = "zcta",
-  variables = c(total_pop = "B01003_001"),
-  state = "MD",
-  year = 2019
-)
+names(moco_totals)
 
 # pt 5
-joined_data <- moco_totals |>
-  left_join(acs_zip, by = c("zip" = "GEOID")) |>
+joined_data <- md_18_up |>
+  left_join(moco_totals, join_by(GEOID==zip)) |>
   rename(population = estimate)
 
 # pt 6
@@ -125,4 +119,11 @@ joined_data <- joined_data |>
 **A5**
 
 ```{r}
+new_joined_data <- joined_data |>
+  mutate(
+    population_min = population - moe,
+    population_max = population + moe,
+    rate_min = (total_calls / population_max) * 1000,
+    rate_max = (total_calls / population_min) * 1000
+  )
 ```
