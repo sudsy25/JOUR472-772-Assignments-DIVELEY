@@ -1,7 +1,7 @@
 ---
 title: "lab_08"
-author: "Derek Willis"
-date: "2025-01-16"
+author: "Andrew Diveley"
+date: "2025-11-05"
 output: html_document
 ---
 
@@ -20,7 +20,6 @@ library(lubridate)
 library(janitor)
 ```
 
-
 ## Load and modify data
 
 **Task** Create a codeblock and load the following data from the data folder:
@@ -30,9 +29,13 @@ library(janitor)
 You will need to create columns for the date, week and month based on the existing `datetime` column.
 
 ```{r}
-
+pg_calls <- read_csv('data/prince_georges_2022_overdoses.csv') |> clean_names() |>
+  mutate(
+    date = date(datetime),
+    week = week(datetime),
+    month = month(datetime)
+)
 ```
-
 
 ## Questions
 
@@ -44,9 +47,23 @@ You will need to create columns for the date, week and month based on the existi
 
 Compare the results here to those from the pre_lab_08 bar chart - are there major differences in the months with the highest and lowest figures? Describe that below.
 
-**A1.**
+**A1. The months with the greatest percentage of calls were the later months, while the lowest were earlier in the year, Jan and Feb. Theres an upward trend as the year progresses, with a spike in July.**
 
 ```{r}
+pg_calls_month <- pg_calls |>
+  group_by(month) |>
+  summarise(total_calls = n()) |>
+  mutate(percent_total = total_calls / sum(total_calls) * 100)
+
+pg_calls_month |>
+  ggplot(aes(x = factor(month), y = percent_total)) +
+  geom_col() +
+  labs(
+    title = "Overdose 911 Calls By Month in PG County",
+    x = "Month",
+    y = "Percent of Total Calls",
+  caption = "Source: Prince George's County") +
+  theme_minimal()
 ```
 
 **Q2.** Let's visualize this data on a weekly basis using a line chart. As in Q1, generate a dataframe with the total number of calls for each week, and then create a line chart to show the distribution of calls over time. Your line chart must have:
@@ -60,6 +77,20 @@ Describe the pattern of results; you may want to look at the data to dig into pa
 **A2.**
 
 ```{r}
+pg_calls_week <- pg_calls |>
+  group_by(week) |>
+  summarise(total_calls = n())
+
+pg_calls_week |>
+  ggplot(aes(x = week, y = total_calls)) +
+  geom_line() +
+  labs(
+    title = "Weekly 911 Overdose Calls in PG County",
+    x = "Week of Year",
+    y = "Total Calls",
+    caption = "Source: PG County"
+  ) +
+  theme_minimal()
 ```
 
 **Q3.** A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis. For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid.
