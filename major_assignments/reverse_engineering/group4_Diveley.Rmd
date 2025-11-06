@@ -52,8 +52,8 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
--   **Sentence text**: In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years.
--   **Analysis summary**: Kind of yes. The summary excel file indicates that the reporter filtered out 22 states which they can also get both private school enrollment and homeschool enrollment data, and write down which those states are. I have no idea why the report here said it's 21 states.
+-   **Sentence text**: In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years. (public)
+-   **Analysis summary**: Yes. The summary excel file indicates that the reporter filtered out 21 states and DC which they can also get both private school enrollment and homeschool enrollment data. And the enrollment did fell by around 700,000.
 
 ```{r}
 # Put code to reverse engineer sentence here
@@ -71,46 +71,85 @@ public_enrollment |>
 
 ### Sentence 2
 
--   **Sentence text**: Across the states in the analysis, private-school enrollment grew by about 103,000 students.
--   **Analysis summary**:  Kind of yes. The summary excel file indicates that the reporter filtered out 22 states which they can also get both private school enrollment and homeschool enrollment data, and write down which those states are.
+-   **Sentence text**:
+
+    “Across the states in the analysis, private-school enrollment grew by about 103,000 students.”
+
+-   **Analysis summary**: The private-school enrollment grew 102,847 students.
 
 ```{r}
 # Put code to reverse engineer sentence here
-private_enrollment |>
+# Display results of code below this codeblock
+
+private_enrollment|>
   filter(grade == "k_12_total") |>
   filter(state=="CA"|state=="NY"|state=="LA"|state=="NC"|state=="WA"|state=="CO"|state=="GA"|state=="MN"|state=="WI"|state=="NH"|state=="MA"|state=="MT"|state=="DE"|state=="ND"|state=="DC"|state=="SD"|state=="SC"|state=="NE"|state=="RI"|state=="TN"|state=="PA"|state=="FL")|>
   group_by(sch_year)|>
   summarise(enrollment_student = sum(enrollment), state_count = n())
+```
 
-# Display results of code below this codeblock
-2435491	- 2332644
+```{r}
+2435491	 - 2332644
 ```
 
 ### Sentence 3
 
--   **Sentence text**: Some families also moved out of state, accounting for some enrollment decline. And birth rates in some states are falling. The population of school-age kids in the states we studied fell by about 183,000, according to census estimates.
--   **Analysis summary**: 
+-   **Sentence text**:“Some families also moved out of state, accounting for some enrollment decline. And birth rates in some states are falling. The population of school-age kids in the states we studied fell by about 183,000, according to census estimates.”
+-   **Analysis summary**: The population of school-age kids fell by 183486.
 
 ```{r}
 # Put code to reverse engineer sentence here
-population_by_age |>
-  filter(state=="CALIFORNIA"|state=="NEW YORK"|state=="LOUISIANA"|state=="NORTH CAROLINA"|state=="WASHINGTON"|state=="COLORADO"|state=="GEORGIA"|state=="MINNESOTA"|state=="WISCONSIN"|state=="NEW HAMPSHIRE"|state=="MASSACHUSETTS"|state=="MONTANA"|state=="DELAWARE"|state=="NORTH DAKOTA"|state=="DISTRICT OF COLUMBIA"|state=="SOUTH DAKOTA"|state=="SOUTH CAROLINA"|state=="NEBRASKA"|state=="RHODE ISLAND"|state=="TENNESSEE"|state=="PENNSYLVANIA"|state=="FLORIDA")|>
-  group_by(est_date) |>
-  summarise(population = sum(population))
 # Display results of code below this codeblock
-27846048	- 27662562
+population_by_age|>
+  filter(state=="CALIFORNIA"|state=="NEW YORK"|state=="LOUISIANA"|state=="NORTH CAROLINA"|state=="WASHINGTON"|state=="COLORADO"|state=="GEORGIA"|state=="MINNESOTA"|state=="WISCONSIN"|state=="NEW HAMPSHIRE"|state=="MASSACHUSETTS"|state=="MONTANA"|state=="DELAWARE"|state=="NORTH DAKOTA"|state=="DISTRICT OF COLUMBIA"|state=="SOUTH DAKOTA"|state=="SOUTH CAROLINA"|state=="NEBRASKA"|state=="RHODE ISLAND"|state=="TENNESSEE"|state=="PENNSYLVANIA"|state=="FLORIDA")|>
+  group_by(est_date)|>
+  summarise(population = sum(population))
+```
+
+```{r}
+27846048 - 27662562	
 ```
 
 ### Sentence 4
 
--   **Sentence text**: [Paste in sentence to engineer here]
+-   **Sentence text**: 
+
+An analysis by The Associated Press, Stanford University’s Big Local News project and Stanford education professor Thomas Dee found an estimated 230,000 students in 21 states whose absences could not be accounted for.
+
 -   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
 # Put code to reverse engineer sentence here
 
-# Display results of code below this codeblock
+#find total data for public and priv
+public_sum <- public_enrollment |>
+  filter(grade == "k_12_total") |>
+  filter(state=="CALIFORNIA"|state=="NEW YORK"|state=="LOUISIANA"|state=="NORTH CAROLINA"|state=="WASHINGTON"|state=="COLORADO"|state=="GEORGIA"|state=="MINNESOTA"|state=="WISCONSIN"|state=="NEW HAMPSHIRE"|state=="MASSACHUSETTS"|state=="MONTANA"|state=="DELAWARE"|state=="NORTH DAKOTA"|state=="DISTRICT OF COLUMBIA"|state=="SOUTH DAKOTA"|state=="SOUTH CAROLINA"|state=="NEBRASKA"|state=="RHODE ISLAND"|state=="TENNESSEE"|state=="PENNSYLVANIA"|state=="FLORIDA") |>
+  group_by(sch_year) |>
+  summarise(public_total = sum(enrollment))
 
+private_sum <- private_enrollment |>
+  filter(grade == "k_12_total") |>
+  filter(state=="CA"|state=="NY"|state=="LA"|state=="NC"|state=="WA"|state=="CO"|state=="GA"|state=="MN"|state=="WI"|state=="NH"|state=="MA"|state=="MT"|state=="DE"|state=="ND"|state=="DC"|state=="SD"|state=="SC"|state=="NE"|state=="RI"|state=="TN"|state=="PA"|state=="FL") |>
+  group_by(sch_year) |>
+  summarise(private_total = sum(enrollment))
+
+#left join the data by school year
+combined_sum <- left_join(public_sum, private_sum, by = "sch_year")
+
+
+#find the total
+combined_sum <- combined_sum |>
+  mutate(total_enrollment = public_total + private_total) |>
+  arrange(sch_year)
+
+#find the difference
+difference <- combined_sum$total_enrollment[combined_sum$sch_year == "2019-2020"] -
+        combined_sum$total_enrollment[combined_sum$sch_year == "2021-2022"]
+
+# Display results of code below this codeblock
+#subtract homeschool number (184000) and decrease of pop of school-age kids (183000)
+unaccounted <- diff-184000-183000
 ```
 
 ### Sentence 5

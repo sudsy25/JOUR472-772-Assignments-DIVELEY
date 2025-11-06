@@ -74,7 +74,7 @@ pg_calls_month |>
 
 Describe the pattern of results; you may want to look at the data to dig into particular outliers.
 
-**A2.**
+**A2. The line graph shows a slow upward climb of total calls per week, with major spikes found in week 28 and 51, there was a dip in late spring.**
 
 ```{r}
 pg_calls_week <- pg_calls |>
@@ -118,4 +118,19 @@ To answer this question, do the following:
 **A3.**
 
 ```{r}
+# pt 1
+pg_calls_zip <- pg_calls |>
+  group_by(zipcode) |>
+  summarise(total_calls = n())
+
+#pt 2
+md_median_income_zip <- get_acs( 
+  geography = "zcta",
+  variables = 'B19013_001',
+  state = "MD",
+  year = 2019
+) |> clean_names()
+
+#pt 3
+pg_zip_joined <- left_join(pg_calls_zip, md_income, by = "zipcode")
 ```
