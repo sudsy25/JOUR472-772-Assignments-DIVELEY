@@ -137,7 +137,6 @@ private_sum <- private_enrollment |>
 #left join the data by school year
 combined_sum <- left_join(public_sum, private_sum, by = "sch_year")
 
-
 #find the total
 combined_sum <- combined_sum |>
   mutate(total_enrollment = public_total + private_total) |>
@@ -148,13 +147,14 @@ difference <- combined_sum$total_enrollment[combined_sum$sch_year == "2019-2020"
         combined_sum$total_enrollment[combined_sum$sch_year == "2021-2022"]
 
 # Display results of code below this codeblock
-#subtract homeschool number (184000) and decrease of pop of school-age kids (183000)
-unaccounted <- diff-184000-183000
+#subtract homeschool number (~184000) and decrease of pop of school-age kids (183486)
+unaccounted <- diff-184000-183486
 ```
 
 ### Sentence 5
 
--   **Sentence text**: [Paste in sentence to engineer here]
+-   **Sentence text**: “California alone showed over 150,000 missing students in the data, and New York had nearly 60,000. Census estimates are imperfect. So AP and Stanford ran a similar analysis for pre-pandemic years in those two states. It found almost no missing students at all, confirming something out of the ordinary occurred during the pandemic.”
+
 -   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
