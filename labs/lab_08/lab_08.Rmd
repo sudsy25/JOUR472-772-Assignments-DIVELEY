@@ -120,6 +120,7 @@ To answer this question, do the following:
 ```{r}
 # pt 1
 pg_calls_zip <- pg_calls |>
+  mutate(zipcode = as.character(zipcode)) |>
   group_by(zipcode) |>
   summarise(total_calls = n())
 
@@ -129,7 +130,9 @@ md_median_income_zip <- get_acs(
   variables = 'B19013_001',
   state = "MD",
   year = 2019
-) |> clean_names()
+) |> clean_names() |>
+  rename(geoid = zipcode) |>
+  mutate(zipcode = as.character(zipcode))
 
 #pt 3
 pg_zip_joined <- left_join(pg_calls_zip, md_income, by = "zipcode")
