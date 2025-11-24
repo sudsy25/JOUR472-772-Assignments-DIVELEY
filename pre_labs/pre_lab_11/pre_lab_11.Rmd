@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_12.Rmd"
-author: "Derek Willis"
-date: "2025-01-16"
+author: "Andrew Diveley"
+date: "2025-11-24"
 output: html_document
 ---
 
@@ -170,7 +170,7 @@ From here, we can do a little cleaning. First we'll use clean_names() to lower t
 
 ### Task 6: Clean up the data
 
-**Task** Run the following code to extract the table we want, clean up the names and change the date column to an actual date. Look at the dataframe; what other information about these releases might you want to add? **Answer**
+**Task** Run the following code to extract the table we want, clean up the names and change the date column to an actual date. Look at the dataframe; what other information about these releases might you want to add? **Answer: I guess if I could pull out a county or city, that could help me narrow searches.**
 
 ```{r}
 # Read in all html from table, get the HTML table.
@@ -244,7 +244,7 @@ tags. What does the output suggest about how many
 
 <ul>
 
-tags there are in the HTML source? **Answer**
+tags there are in the HTML source? **Answer: 94**
 
 ```{r}
 osp_results |> html_elements('li')
@@ -266,7 +266,7 @@ tags. To do that, we add `html_text()` to the end of the last code block:
 
 <li>
 
-tags. Describe the output: **Answer**
+tags. Describe the output: **Answer: It just extracts the text, removes unnecessary things like links**
 
 ```{r}
 osp_results |> html_elements('li') |> html_text()
@@ -280,7 +280,7 @@ Ok, so now we can see the press releases. But they are surrounded by a bunch of 
 
 tags into a dataframe
 
-**Task** Run the following code in the gray-colored codeblock below to make a dataframe. Describe the output: **Answer**
+**Task** Run the following code in the gray-colored codeblock below to make a dataframe. Describe the output: **Answer: It creates a dataframe of only the text.**
 
 ```{r}
 releases <- osp_results |> html_elements('li') |> html_text() |> as_tibble()
