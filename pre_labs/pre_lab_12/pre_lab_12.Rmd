@@ -1,7 +1,7 @@
 ---
 title: "pre_lab_11.Rmd"
-author: "derek willis"
-date: "2025-01-16"
+author: "Andrew Diveley"
+date: "2025-12-01"
 output: html_document
 ---
 
@@ -39,7 +39,7 @@ Let's read in this data and examine it:
 
 ### Task 2: Read in data
 
-**Task** Run the following code and describe the dataframe it outputs. **Answer**
+**Task** Run the following code and describe the dataframe it outputs. **Answer: This dataset tells us the names of physicians and when they were punished and why they were punished.**
 
 ```{r}
 alerts <- read_rds("data/md_doc_alerts.rds")
@@ -60,7 +60,7 @@ If you are trying to create a list of unique words, R will treat differences in 
 
 ### Task 4: Trying out unique
 
-**Task** Run the following code and describe what the `unique` function does to the original list of words. **Answer**
+**Task** Run the following code and describe what the `unique` function does to the original list of words. **Answer: it removes repeated entries, returning each item only once. It doesn't combine them though.**
 
 ```{r}
 a_list_of_words <- c("Dog", "dog", "dog", "cat", "cat", ",")
@@ -71,7 +71,7 @@ Fortunately, this is a solved problem with tidytext, which has a function called
 
 ### Task 5: Trying out unnest_tokens
 
-**Task** Run the following code and describe the output of using the `unnest_tokens` function. **Answer**
+**Task** Run the following code and describe the output of using the `unnest_tokens` function. **Answer: there is now only one column with all 1.3 million words used, all lowercase, no punctuation.**
 
 ```{r}
 unique_words <- alerts |> select(text) |>
@@ -81,7 +81,7 @@ View(unique_words)
 
 ### Task 6: Make a column chart
 
-**Task** Run the following code and describe what the resulting graphic shows. Is it interesting? **Answer**
+**Task** Run the following code and describe what the resulting graphic shows. Is it interesting? **Answer: it now shows a bar graph of the top 25 most used words, and the x-axis tells us the frequency. It isn't that interesting, as the words on the chart are expected to me common like the, of, and to.**
 
 Now we can look at the top words in this dataset. Let's limit ourselves to making a plot of the top 25 words, and we'll use the function `count` to do the counting:
 
@@ -127,7 +127,7 @@ From there, we can get a simple word frequency by just grouping them together an
 
 ### Task 8: Using anti_join
 
-**Task** Run the following code and describe the results. Is it more interesting than before? **Answer**
+**Task** Run the following code and describe the results. Is it more interesting than before? **Answer: it now shows us the top 50 words used, after removing the common words. Also, it shows how many times it appears and the percentage of the remaining words it makes up. This is more interesting without the common words.**
 
 ```{r}
 unique_words |>
@@ -160,7 +160,7 @@ Then we can create top 10 lists for both of them and compare:
 
 ### Task 10: Create dataframes with the top 10 words in each year
 
-**Task** Run the following code and describe the results. **Answer**
+**Task** Run the following code and describe the results. **Answer: now we can see the top ten non-stop words for each year. We can now compare the cost common meaningful words from each year's dataset, seeing if there are any differences or matches.**
 
 ```{r}
 unique_words_2023 |>
@@ -198,11 +198,11 @@ So this block is is going to do the following:
 
 ### Task 11: Create a dataframe with the top 10 two-word phrases for 2021
 
-**Task** Run the following code and describe the results. **Answer**
+**Task** Run the following code and describe the results. **Answer: This displays the top ten two word phrases before 2022. This can help us understand the most common reasons for disciplinary actions**
 
 ```{r}
 alerts |>
-  filter(date < '2024-01-01') |>
+  filter(date < '2022-01-01') |>
   unnest_tokens(bigram, text, token = "ngrams", n = 2) |>
   separate(bigram, c("word1", "word2"), sep = " ") |>
   filter(!word1 %in% stop_words$word) |>
@@ -218,7 +218,7 @@ And we already have a different, more nuanced result. We can see that "summary s
 
 ### Task 12: Create a dataframe with the top 10 two-word phrases for 2023
 
-**Task** Run the following code and describe the results. **Answer**
+**Task** Run the following code and describe the results. **Answer: This displays the top ten two word phrases before 2024.**
 
 ```{r}
 alerts |>
@@ -238,7 +238,7 @@ And 2024?
 
 ### Task 13: Create a dataframe with the top 10 two-word phrases for 2024
 
-**Task** Run the following code and describe the results. **Answer**
+**Task** Run the following code and describe the results. **Answer: now we see the top 10 past the first of 2024.**
 
 ```{r}
 alerts |>
@@ -264,7 +264,7 @@ Another popular use of text analysis is to measure the sentiment of a word - whe
 
 ### Task 14: Load the bing lexicon and produce sentiments for our 2021-2023 unique words
 
-**Task** Run the following code and describe the results. Do any of the sentiments seem incorrect or counter-intuitive? **Answer**
+**Task** Run the following code and describe the results. Do any of the sentiments seem incorrect or counter-intuitive? **Answer: We can now see the mostly negative list of words and their sentiment. Patient can be negative in our case, same with appropriate and effective aren't really used in a positive way.**
 
 ```{r}
 bing <- get_sentiments("bing")
