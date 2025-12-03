@@ -1,6 +1,6 @@
 ---
 title: "ghg project"
-author: "Andrew Diveley"
+author: "Andrew Diveley, Dylan Schmidt, Quinn Muller, Lillian Glaros"
 date: "2025-12-03"
 output: html_document
 ---
