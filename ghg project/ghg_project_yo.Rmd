@@ -1,0 +1,30 @@
+---
+title: "ghg project"
+author: "Andrew Diveley"
+date: "2025-12-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(janitor)
+library(lubridate)
+library(rvest)
+library(gsheet2)
+```
+
+## Load the GHG dataset
+
+```{r}
+
+```
+

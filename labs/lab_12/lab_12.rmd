@@ -29,16 +29,59 @@ library(rvest)
 
 **Q1.** You've been assigned to report a story about the leading reasons that Maryland attorneys get sanctioned by the state for misconduct. The state [publishes lists of sanctions](https://www.courts.state.md.us/attygrievance/sanctions) that contain a short text description about the situation. Load the CSV file in the data folder containing records from fiscal year 2011 onwards. Make a list of unique words from the text column, then following the example in the pre_lab, remove common "stop words" from that list and create a list of the top 10 words containing the percentage of occurrences each word represents. What's the leading word in that answer and, broadly, what do you think the top 10 words describe?
 
-**A1.**
+**A1. The leading word is trust. I think the top 10 words describe represent the attorneys' core duties with trust and counsel and justice and such.**
 
 ```{r}
+sanctions <- read_csv("data/md_attorney_sanctions.csv") |> clean_names()
+
+sanctions <- sanctions |>
+  mutate(text = gsub("http.*", "", text))
+
+unique <- sanctions |>
+  select(text) |>
+  unnest_tokens(word, text)
+
+data("stop_words")
+stop_words <- stop_words |>
+  add_row(word = "maryland") |>
+  add_row(word = "attorney") |>
+  add_row(word = "respondent") |>
+  add_row(word = "commission") |>
+  add_row(word = "reprimand") |>
+  add_row(word = "consent") |>
+  add_row(word = "indefinite") |>
+  add_row(word = "suspension") |>
+  add_row(word = "conduct") |>
+  add_row(word = "funds") |>
+  add_row(word = "failed") |>
+  add_row(word = "client") |>
+  add_row(word = "clients") |>
+  add_row(word = "failing")
+
+top_ten_common <- unique |>
+  anti_join(stop_words) |>
+  group_by(word) |>
+  tally(sort = TRUE) |>
+  mutate(percent = (n / sum(n)) * 100) |>
+  top_n(10)
 ```
 
 **Q2.** Let's move beyond single words to phrases. Make a list of the top 10 three-word phrases, called trigrams, based on the example from the pre_lab (you'll need to modify the example code to do this). What's the top trigram and how often does it appear? What does that phrase mean in legal terms?
 
-**A2.**
+**A2. The top trigram is "dishonesty fraud deceit," which appears 181 times. It describes a serious sanction where an attorney deceives or misleads people.**
 
 ```{r}
+top_ten_trigrams <- sanctions |> 
+  unnest_tokens(trigram, text, token = "ngrams", n = 3) |>
+  separate(trigram, c("word1", "word2", "word3"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  filter(!word3 %in% stop_words$word) |>
+  mutate(trigram = paste(word1, word2, word3, sep=" ")) |>
+  group_by(trigram) |>
+  tally(sort=TRUE) |>
+  mutate(percent = (n/sum(n))*100) |>
+  top_n(10)
 ```
 
 **Q3.** Let's drop back down to more traditional text analysis - take the top trigram from Q2 and write code to see how many times it occurs in the text column in each fiscal year. What do you think the answer produced by your code suggests? What else could you do to try and clarify the most important reasons attorneys get sanctioned?
@@ -46,4 +89,8 @@ library(rvest)
 **A3.**
 
 ```{r}
+trigram_per_year <- sanctions |>
+  filter(str_detect(text, "dishonesty fraud deceit")) |>
+  count(fiscal_year, name = "n_occurrences") |>
+  arrange(fiscal_year)
 ```
