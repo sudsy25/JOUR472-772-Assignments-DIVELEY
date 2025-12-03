@@ -19,12 +19,22 @@ library(tidytext)
 library(janitor)
 library(lubridate)
 library(rvest)
-library(gsheet2)
+install.packages(readxl)
+library(readxl)
 ```
 
 ## Load the GHG dataset
 
 ```{r}
+ghg_data <- read_xls("data/flight.xls") |> clean_names()
+```
 
+## Group by parent companies
+
+```{r}
+parent_comp <- ghg_data |>
+  group_by(parent_companies) |>
+  summarise(count=n()) |>
+  arrange(desc(count))
 ```
 
