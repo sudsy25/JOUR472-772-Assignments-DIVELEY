@@ -23,11 +23,15 @@ install.packages(readxl)
 library(readxl)
 ```
 
-## Load the GHG dataset
+## Load the GHG dataset (load more as needed)
 
 ```{r}
-ghg_data <- read_xls("data/flight.xls") |> clean_names()
+ghg_data_2023 <- read_xls("data/flight.xls") |> clean_names()
+ghg_data_2022 <- read_excel("data/flight.xls", sheet = 2)
+ghg_data_2021 <- read_excel("data/flight.xls", sheet = 3)
 ```
+
+## Problems with our datasets: we cant answer the one question about the types of GHG, this only shows CO2. We have all the years from 2010-2023, so we can lopok at trends over the years. There are some missing fields we'll have to remove as needed. It is nice we get every part of the location/address thatwe can further group. We do need to figure out the "sub-parts" column to see if it may provide any relevance to our questions. We may find that certain places may not have reported in previous years or have moved and that could complicate things.
 
 ## Group by parent companies
 
