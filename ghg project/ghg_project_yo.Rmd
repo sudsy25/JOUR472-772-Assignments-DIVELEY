@@ -42,3 +42,20 @@ parent_comp <- ghg_data |>
   arrange(desc(count))
 ```
 
+## Q1: Where are most greenhouse gases emitted? (state)
+
+```{r}
+emissions_by_state <- flight_2023 |>
+  group_by(state) |>
+  summarise(
+    total_ghg_mtco2e = sum(ghg_quantity, na.rm = TRUE),
+    n_facilities      = n()
+  ) |>
+  arrange(desc(total_ghg_mtco2e))
+
+emissions_by_state |> head(10)
+```
+
+
+
+
