@@ -44,14 +44,17 @@ parent_comp <- ghg_data |>
 
 ## Q1: Where are most greenhouse gases emitted? (state)
 
+## We first grouped by state, and then we summarized the amount of co2e. Once we counted the number of facilities, we can divide the co2e emissions by the number of facilities to get an average.
+
 ```{r}
-emissions_by_state <- flight_2023 |>
+emissions_by_state <- ghg_data_2023 |>
   group_by(state) |>
   summarise(
-    total_ghg_mtco2e = sum(ghg_quantity, na.rm = TRUE),
-    n_facilities      = n()
+    total_mtco2e = sum(ghg_quantity_metric_tons_co2e, na.rm = TRUE),
+    n_facilities = n()
   ) |>
-  arrange(desc(total_ghg_mtco2e))
+  mutate(avg_mtco2e_per_facility = total_mtco2e / n_facilities) |>
+  arrange(desc(total_mtco2e))
 
 emissions_by_state |> head(10)
 ```
