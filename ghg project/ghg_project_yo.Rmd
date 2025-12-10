@@ -29,6 +29,13 @@ library(readxl)
 ghg_data_2023 <- read_xls("data/flight.xls") |> clean_names()
 ghg_data_2022 <- read_excel("data/flight.xls", sheet = 2)
 ghg_data_2021 <- read_excel("data/flight.xls", sheet = 3)
+ghg_data_2020 <- read_excel("data/flight.xls", sheet = 4)
+ghg_data_2019 <- read_excel("data/flight.xls", sheet = 5)
+ghg_data_2018 <- read_excel("data/flight.xls", sheet = 6)
+ghg_data_2017 <- read_excel("data/flight.xls", sheet = 7)
+ghg_data_2016 <- read_excel("data/flight.xls", sheet = 8)
+ghg_data_2015 <- read_excel("data/flight.xls", sheet = 9)
+ghg_data_2014 <- read_excel("data/flight.xls", sheet = 10)
 ```
 
 ## Problems with our datasets: we cant answer the one question about the types of GHG, this only shows CO2. We have all the years from 2010-2023, so we can lopok at trends over the years. There are some missing fields we'll have to remove as needed. It is nice we get every part of the location/address thatwe can further group. We do need to figure out the "sub-parts" column to see if it may provide any relevance to our questions. We may find that certain places may not have reported in previous years or have moved and that could complicate things.
@@ -59,7 +66,7 @@ emissions_by_state <- ghg_data_2023 |>
 emissions_by_state |> head(10)
 ```
 
-## Q3: How many tons of greenhouse gases are emitted per day?
+## Q2: How many tons of greenhouse gases are emitted per day?
 
 ## We summarized our number of metric tons of co2e, then easily divided by 365, the number of days within a year. We could always do the same as before and find per state or per facility.
 

@@ -1,7 +1,7 @@
 ---
 title: "week16_recap"
-author: "Daniel Trielli"
-date: "2023-12-05"
+author: "Andrew Diveley"
+date: "2025-12-10"
 output: html_document
 ---
 
@@ -31,7 +31,7 @@ library(corrr)
 First, here the data we need to load:
 
 ```{r}
-childcare_inspections <- read_csv('data/childcare_inspections.csv')
+childcare_inspections <- read_csv('data/childcare_inspections.csv') |> clean_names()
 childcare_inspections$fips <- as.character(childcare_inspections$fips)
 ```
 
@@ -44,10 +44,11 @@ md_counties <- counties() |>  filter(STATEFP == "24")
 
 ```{r}
 # Join the childcare data with the county data 
-
+md_childcare <- md_counties |>
+  left_join(childcare_inspections, by = c("GEOID" = "fips"))
 ```
 
-##### A1:
+##### A1: The best one to use is the NAMELSAD because it removes overlaps such as Baltimore City vs Baltimore County.
 
 ------------------------------------------------------------------------
 
@@ -55,12 +56,27 @@ md_counties <- counties() |>  filter(STATEFP == "24")
 
 ```{r}
 # Calculate the percentage of overdue inspections per county
-
+md_childcare_overdue <- md_childcare |>
+  mutate(pct_overdue = (overdue / total) * 100) |>
+  select(NAMELSAD, pct_overdue) |>
+  arrange(desc(pct_overdue)) |>
+  slice_head(n = 10)
 # Create the chart with ggplot
+ggplot(md_childcare_overdue,
+       aes(x = reorder(NAMELSAD, pct_overdue),
+           y = pct_overdue)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    x = "County",
+    y = "Percent of facilities overdue",
+    title = "Percent of overdue childcare inspections by county in Maryland"
+  ) +
+  theme_minimal()
 
 ```
 
-##### **A2:**
+##### **A2: Montgomery County had the largest percentage of facilities with overdue inspections, with 65.9%.**
 
 ------------------------------------------------------------------------
 
