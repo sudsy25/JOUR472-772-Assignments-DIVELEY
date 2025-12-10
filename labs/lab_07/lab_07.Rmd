@@ -1,0 +1,129 @@
+---
+title: "lab_07"
+author: "Andrew Diveley"
+date: "2025-08-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## You will need
+
+-   A Census API key
+
+## Load libraries and establish settings
+
+You'll need to load two packages for this: the tidyverse and tidycensus.
+
+**Task** load these two packages
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load the tidyverse.
+library(tidycensus)
+library(tidyverse)
+library(janitor)
+
+```
+
+## Setup Census API
+
+You'll need your Census API Key:
+
+**Task** set your API Key if you haven't already. You won't need to install or overwrite it.
+
+```{r echo=FALSE}
+census_api_key("d0a01aa95b716c0ca59676a8ae1c9276359a7104", install=TRUE)
+```
+
+## Load and view ACS variables
+
+You'll also need to load the list of American Community Survey variables from the 2023 5-year estimates so you can identify the codes you need:
+
+**Task** load the variables from the 2023 5-year ACS (which is called "acs5") and save them to a dataframe
+
+```{r}
+variables <- load_variables(2023, "acs5", cache = TRUE)
+variables2019 <- load_variables(2019, "acs5", cache = TRUE)
+```
+
+## Answer questions
+
+**Q1** What is the Maryland jurisdiction with the lowest median age, according to the ACS 2023 5-year estimates? You will need to find the variable for median age first. **A1: Baltimore City, 36.1**
+
+```{r}
+mdn_age <- get_acs(geography = "county",
+              variables = c(medianage = "B01002_001"),
+              state = "MD",
+              year = 2023)
+```
+
+**Q2** Which Maryland counties have a median age of at least 50? You can use the dataframe you just made to answer this, but you must write code to display only those counties with a median age of at least 50. **A2: Talbot County and Worcester County**
+
+```{r}
+mdn_age_50 <- mdn_age |> 
+  filter(estimate >= 50) |> 
+  arrange(desc(estimate))
+```
+
+**Q3** We're interested in knowing more about Montgomery County zip codes where overdose calls are coming from and the demographic characteristics they possess. In particular, we want to calculate a rate of calls per 1,000 population. To do this, you'll need to:
+
+1.  Load the Montgomery County 911 overdose calls data.
+2.  Create a new dataframe with the total number of calls for each zip code.
+3.  Find the ACS variable pertaining to the total 18 and up population (there are several choices here; you want the simplest one).
+4.  Get from the ACS data from all Maryland zip codes using that variable - you will need to specify an earlier year to get the data.
+5.  Join the ACS data to the Montgomery County zip code totals dataframe and rename the estimate column to a meaningful name you've given the ACS variable.
+6.  Add a column to the joined dataframe that calculates a rate of calls per 1,000 population.
+
+Which zip code has the highest rate of calls? Which has the lowest?
+
+**A3**
+
+```{r}
+# pt 1
+mtg_overdoses <- read_csv("data/montgomery_2022_overdoses.csv") |> clean_names() |> mutate(zip = as.character(zip))
+
+# pt 2
+moco_totals <- mtg_overdoses |>
+  group_by(zip) |>
+  summarise(total_calls = n())
+
+# pt 3 and 4
+md_18_up <- get_acs(geography = "zcta",
+              variables = c(md_18_up = "B16003_008"),
+              state = "MD",
+              year = 2019)
+
+names(moco_totals)
+
+# pt 5
+joined_data <- md_18_up |>
+  left_join(moco_totals, join_by(GEOID==zip)) |>
+  rename(population = estimate)
+
+# pt 6
+joined_data <- joined_data |>
+  mutate(rate_per_1000 = (total_calls / population) * 1000)
+```
+
+**Q4** Using [CensusReporter.org](https://censusreporter.org/), examine the zip codes with the highest and lowest rates and compare and contrast their demographic profiles. Is there a story here?
+
+**A4**
+
+**Q5** Go back to your joined dataframe from Q3 and add two more columns representing the minimum and maximum populations based on the estimate and margin of error, then calculate per capita rates for each. Do you get the same two zip codes for the highest and lowest as you did before? Does that give you more or less confidence in your answers to Q3?
+
+**A5**
+
+```{r}
+new_joined_data <- joined_data |>
+  mutate(
+    population_min = population - moe,
+    population_max = population + moe,
+    rate_min = (total_calls / population_max) * 1000,
+    rate_max = (total_calls / population_min) * 1000
+  )
+```

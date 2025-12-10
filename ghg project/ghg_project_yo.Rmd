@@ -1,0 +1,64 @@
+---
+title: "ghg project"
+author: "Andrew Diveley, Dylan Schmidt, Quinn Muller, Lillian Glaros"
+date: "2025-12-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(janitor)
+library(lubridate)
+library(rvest)
+install.packages(readxl)
+library(readxl)
+```
+
+## Load the GHG dataset (load more as needed)
+
+```{r}
+ghg_data_2023 <- read_xls("data/flight.xls") |> clean_names()
+ghg_data_2022 <- read_excel("data/flight.xls", sheet = 2)
+ghg_data_2021 <- read_excel("data/flight.xls", sheet = 3)
+```
+
+## Problems with our datasets: we cant answer the one question about the types of GHG, this only shows CO2. We have all the years from 2010-2023, so we can lopok at trends over the years. There are some missing fields we'll have to remove as needed. It is nice we get every part of the location/address thatwe can further group. We do need to figure out the "sub-parts" column to see if it may provide any relevance to our questions. We may find that certain places may not have reported in previous years or have moved and that could complicate things.
+
+## Group by parent companies
+
+```{r}
+parent_comp <- ghg_data |>
+  group_by(parent_companies) |>
+  summarise(count=n()) |>
+  arrange(desc(count))
+```
+
+## Q1: Where are most greenhouse gases emitted? (state)
+
+## We first grouped by state, and then we summarized the amount of co2e. Once we counted the number of facilities, we can divide the co2e emissions by the number of facilities to get an average.
+
+```{r}
+emissions_by_state <- ghg_data_2023 |>
+  group_by(state) |>
+  summarise(
+    total_mtco2e = sum(ghg_quantity_metric_tons_co2e, na.rm = TRUE),
+    n_facilities = n()
+  ) |>
+  mutate(avg_mtco2e_per_facility = total_mtco2e / n_facilities) |>
+  arrange(desc(total_mtco2e))
+
+emissions_by_state |> head(10)
+```
+
+
+
+
