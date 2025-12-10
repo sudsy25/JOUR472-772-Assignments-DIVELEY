@@ -19,7 +19,7 @@ library(tidytext)
 library(janitor)
 library(lubridate)
 library(rvest)
-install.packages(readxl)
+install.packages("readxl")
 library(readxl)
 ```
 
