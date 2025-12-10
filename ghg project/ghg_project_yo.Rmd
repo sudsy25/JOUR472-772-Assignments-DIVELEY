@@ -36,7 +36,7 @@ ghg_data_2021 <- read_excel("data/flight.xls", sheet = 3)
 ## Group by parent companies
 
 ```{r}
-parent_comp <- ghg_data |>
+parent_comp <- ghg_data_2023 |>
   group_by(parent_companies) |>
   summarise(count=n()) |>
   arrange(desc(count))
@@ -44,7 +44,7 @@ parent_comp <- ghg_data |>
 
 ## Q1: Where are most greenhouse gases emitted? (state)
 
-## We first grouped by state, and then we summarized the amount of co2e. Once we counted the number of facilities, we can divide the co2e emissions by the number of facilities to get an average.
+## We first grouped by state, and then we summarized the amount of co2e. Once we counted the number of facilities, we can divide the co2e emissions by the number of facilities to get an average per facility within the state. I then showed the top 10 results.
 
 ```{r}
 emissions_by_state <- ghg_data_2023 |>
@@ -59,6 +59,13 @@ emissions_by_state <- ghg_data_2023 |>
 emissions_by_state |> head(10)
 ```
 
+## Q3: How many tons of greenhouse gases are emitted per day?
 
+## We summarized our number of metric tons of co2e, then easily divided by 365, the number of days within a year. We could always do the same as before and find per state or per facility.
 
+```{r}
+average_2023_mtco2e <- ghg_data_2023 |>
+  summarise(total_mtco2e = sum(ghg_quantity_metric_tons_co2e, na.rm = TRUE)) |>
+  mutate(mtco2e_per_day = total_mtco2e / 365)
+```
 
