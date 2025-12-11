@@ -84,7 +84,7 @@ ggplot(md_childcare_overdue,
 
 ```{r}
 # First, grab data from the ACS. The ACS variable for children age under 5 is B06001_002 We want 2022 data.
-
+b06001_002
 ```
 
 ```{r}
