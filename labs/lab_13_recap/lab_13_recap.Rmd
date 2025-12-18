@@ -22,6 +22,8 @@ library(janitor)
 library(tigris)
 library(tidycensus)
 library(corrr)
+library(sf)
+library(tidytext)
 ```
 
 ## Load Data
@@ -84,32 +86,56 @@ ggplot(md_childcare_overdue,
 
 ```{r}
 # First, grab data from the ACS. The ACS variable for children age under 5 is B06001_002 We want 2022 data.
-b06001_002
+children_under_5 <- get_acs(
+  geography = "county",
+  variables = "B06001_002",
+  year = 2022,
+  state = "MD"
+)
 ```
 
 ```{r}
 # Rename the column name 'estimate', which has our population data, with something more useful, like 'children_pop'
-
+children_under_5 <- children_under_5 |>
+  select(GEOID, estimate) |>
+  rename(children_pop = estimate)
 ```
 
 ```{r}
 # Join the dataframes
-
+md_childcare_joined <- md_childcare |>
+  left_join(children_under_5, by = "GEOID")
 # Calculate the rates for children per facility
-
+md_childcare_rates <- md_childcare_joined |>
+  mutate(children_per_facility = children_pop / total) |>
+  arrange(desc(children_per_facility))
 ```
 
-##### **A3:**
+##### **A3: Garrett County**
 
 ------------------------------------------------------------------------
 
 #### **Q4** Make a map of the results for question 3. Are there any areas of the state that are more lacking in childcare facilities?
 
 ```{r}
+md_childcare_map <- md_counties |>
+  left_join(
+    md_childcare_rates |>
+      st_drop_geometry() |>
+      select(GEOID, children_per_facility),
+    by = "GEOID"
+  )
 
+ggplot(md_childcare_map) +
+  geom_sf(aes(fill = children_per_facility), color = "black", linewidth = 0.2) +
+  labs(
+    title = "Children under 5 per facility by county in Maryland",
+    fill = "Children per facility",
+  ) +
+  theme_minimal()
 ```
 
-##### **A4**:
+##### **A4**: The map shows that the southeastern side has lower amounts of children per facility. Central MD has higher amounts of children under 5 per facility.
 
 ------------------------------------------------------------------------
 
@@ -117,30 +143,54 @@ b06001_002
 
 ```{r}
 # Again, grab data from the ACS. The ACS variable for median income is B19013_001. We want 2022 data again.
-
+median_income_2022 <- get_acs(
+  geography = "county",
+  variables = "B19013_001",
+  year = 2022,
+  state = "MD",
+  geometry = FALSE
+)
 ```
 
 ```{r}
 # Rename the column name 'estimate', which has our income data, with something more useful, like 'median_income'
-
+median_income_2022 <- median_income_2022 |>
+  select(GEOID, estimate) |>
+  rename(median_income = estimate)
 ```
 
 ```{r}
 # Join the dataframes
-
+md_childcare_income <- md_childcare_rates |>
+  left_join(median_income_2022, by = "GEOID")
 ```
 
 ```{r}
 # Create a scatterplot with median income and rate of children per facility
-
+ggplot(
+  md_childcare_income |>
+    st_drop_geometry(),
+  aes(x = median_income, y = children_per_facility)
+) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Median income vs. children per child care facility in Maryland",
+    x = "Median household income (ACS 2022)",
+    y = "Children under 5 per facility"
+  ) +
+  theme_minimal()
 ```
 
 ```{r}
 # Create a correlation test.
-
+cor.test(
+  md_childcare_income$median_income,
+  md_childcare_income$children_per_facility
+)
 ```
 
-##### A5:
+##### A5: The correlation is weak and negative, because the crrelatipon coefficient is -.11. The p-value is .61, which is way above .05, so its not statistically significant. In conclusion, there is not enough evident to prove their correlation.
 
 ------------------------------------------------------------------------
 
@@ -153,12 +203,37 @@ reports <- read_csv('data/childcare-informal-provider-inspections.csv') |> clean
 
 ```{r}
 # Create a stopword dictionary (feel free to include more words)
+findings <- reports |>
+  select(initial_findings) |>
+  unnest_tokens(word, initial_findings)
 
+data("stop_words")
+stop_words <- stop_words |>
+  add_row(word = "compliant") |>
+  add_row(word = "standards") |>
+  add_row(word = "h&s") |>
+  add_row(word = "health") |>
+  add_row(word = "safety") |>
+  add_row(word = "provider") |>
+  add_row(word = "providers") |>
+  add_row(word = "child") |>
+  add_row(word = "children") |>
+  add_row(word = "care") |>
+  add_row(word = "inspection") |>
+  add_row(word = "approved") |>
+  add_row(word = "na")
 ```
 
 ```{r}
 # Unnest tokens into bigrams, removing stop words and repasting bigrams, list bigrams
-
+top_ten_bigrams <- reports |> 
+  unnest_tokens(bigram, initial_findings, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% stop_words$word) |>
+  filter(!word2 %in% stop_words$word) |>
+  mutate(bigram = paste(word1, word2, sep = " ")) |>
+  group_by(bigram) |>
+  tally(sort = TRUE)
 ```
 
-##### A6:
+##### A6: A lot of emergency preparedness pops up the most often, there are still things about electrical outlets and cleaning things that are concerning because they are hazardous to children
